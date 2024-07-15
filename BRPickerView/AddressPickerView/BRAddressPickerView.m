@@ -115,10 +115,20 @@
         NSString *bundlePath = [containnerBundle pathForResource:@"BRAddressPickerView" ofType:@"bundle"];
         NSBundle *addressPickerBundle = [NSBundle bundleWithPath:bundlePath];
         
-        // 获取bundle中的JSON文件
-        NSString *filePath = [addressPickerBundle pathForResource:@"BRCity" ofType:@"json"];
-        NSData *data = [NSData dataWithContentsOfFile:filePath];
-        cityArray = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+//        // 获取bundle中的JSON文件
+//        NSString *filePath = [addressPickerBundle pathForResource:@"BRCity" ofType:@"json"];
+//        NSData *data = [NSData dataWithContentsOfFile:filePath];
+
+
+        // 获取加密文件的 URL
+        NSURL *encryptedFileURL = [addressPickerBundle URLForResource:@"BRCity" withExtension:nil];
+        // 读取文件内容
+        NSError *error;
+        NSData *encryptedFileData = [NSData dataWithContentsOfURL:encryptedFileURL options:NSDataReadingUncached error:&error];
+        //解密加密后的二进制数据
+        NSData *base64DATA = [[NSData alloc] initWithBase64EncodedData:encryptedFileData options:0];
+        
+        cityArray = [NSJSONSerialization JSONObjectWithData:base64DATA options:NSJSONReadingAllowFragments error:nil];
     }
     return cityArray;
 }
